@@ -3,26 +3,8 @@
 adapters:
   ILLUMINACLIP:NexteraPE-PE.fa:2:30:10:8:true
 
-bt2_genome:
-  /home/groups/hoolock2/u0/genomes/ucsc/hg38/indexes/bowtie2/hg38
+star_genome:
+  /home/groups/hoolock2/u0/genomes/ensembl/mus_musculus/indexes/STAR
 
 gtf:
-  /home/groups/hoolock2/u0/genomes/ucsc/hg38/annotation/hg38.ncbiRefSeq.gtf
-
-effective_genome_size:
-  2913022398
-
-treat_samples:
-  ['2e6330', '100k330', '100k1115']
-
-control_sample:
-  "control"
-
-macs2_genome:
-  hs
-
-data_source:
-  hg38
-
-organism:
-  Homo_sapiens
+  /home/groups/hoolock2/u0/genomes/ensembl/mus_musculus/annotation/Mus_musculus.GRCm38.99.gtf

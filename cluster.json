@@ -18,5 +18,10 @@
     {
         "stdout": "logs/trimmomatic_%A.out",
         "stderr": "logs/trimmomatic_%A.err"
+    },
+    "star":
+    {
+        "stdout": "logs/star_%A.out",
+        "stderr": "logs/star_%A.err"
     }
 }

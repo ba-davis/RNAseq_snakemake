@@ -14,7 +14,8 @@ rule all:
     input:
         expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
         expand("data/trimming/{sample}.paired_{dir}.fq.gz", sample = SAMPLES, dir = ["R1", "R2"]),
-
+        expand("data/star/{sample}.bam", sample = SAMPLES),
+        expand("data/star/{sample}.ReadsPerGene.out.tab", sample = SAMPLES)
 
 rule fastqc_raw:
     input:
@@ -49,4 +50,32 @@ rule trimmomatic:
     shell:
         "trimmomatic PE -phred33 {input.fwd} {input.rev} {output.fwd} {output.fwd_unpaired} {output.rev} {output.rev_unpaired} {params.adapters} {params.trimmer}"
 
-
+rule star:
+    input:
+        fwd = "data/trimming/{sample}.paired_R1.fq.gz",
+        rev = "data/trimming/{sample}.paired_R2.fq.gz"
+    output:
+        bam_file = "data/star/{sample}.bam",
+        counts = "data/star/{sample}.ReadsPerGene.out.tab"
+    conda:
+        "envs/star.yaml"
+    params:
+        genome = congif["star_genome"],
+        gtf = config["gtf"],
+        out_prefix = "data/star/{sample}"
+    shell:
+        """
+        STAR \
+            --runThreadN 8 \
+            --genomeDir {params.genome} \
+            --readFilesIn {input.fwd} {input.rev} \
+            --readFilesCommand zcat \
+            --sjdbGTFfile {params.gtf} \
+            --outFileNamePrefix {params.out_prefix} \
+            --outSAMstrandField intronMotif \
+            --outSAMtype BAM SortedByCoordinate \
+            --outFilterIntronMotifs RemoveNoncanonicalUnannotated \
+            --quantMode GeneCounts \
+            --twopassMode Basic \
+            --outReadsUnmapped Fastx"
+        """
