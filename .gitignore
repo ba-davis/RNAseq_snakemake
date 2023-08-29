@@ -1,0 +1,2 @@
+# Ignore the snakemake virtual envs
+.snakemake
