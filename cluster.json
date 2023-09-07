@@ -4,9 +4,9 @@
         "account": "davibr",
         "mem": "30G",
         "time": "0-24:00",
-	    "partition": "exacloud",
-	    "cores": "8",
-	    "nodes": "1",
+	"partition": "exacloud",
+	"cores": "8",
+	"nodes": "1",
         "qos": "normal"
     },
     "fastqc_raw":
@@ -21,6 +21,9 @@
     },
     "star":
     {
+	"qos": "long_jobs",
+	"time": "3-00",
+	"mem": "72G",
         "stdout": "logs/star_%A.out",
         "stderr": "logs/star_%A.err"
     }

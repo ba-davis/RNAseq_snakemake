@@ -4,7 +4,7 @@ adapters:
   ILLUMINACLIP:NexteraPE-PE.fa:2:30:10:8:true
 
 star_genome:
-  /home/groups/hoolock2/u0/genomes/ensembl/mus_musculus/indexes/STAR
+  /home/groups/hoolock2/u0/genomes/ensembl/mus_musculus/indexes/STAR_2.7.10b
 
 gtf:
   /home/groups/hoolock2/u0/genomes/ensembl/mus_musculus/annotation/Mus_musculus.GRCm38.99.gtf

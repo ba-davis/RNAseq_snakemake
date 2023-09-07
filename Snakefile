@@ -60,22 +60,10 @@ rule star:
     conda:
         "envs/star.yaml"
     params:
-        genome = congif["star_genome"],
+        genome = config["star_genome"],
         gtf = config["gtf"],
         out_prefix = "data/star/{sample}"
     shell:
         """
-        STAR \
-            --runThreadN 8 \
-            --genomeDir {params.genome} \
-            --readFilesIn {input.fwd} {input.rev} \
-            --readFilesCommand zcat \
-            --sjdbGTFfile {params.gtf} \
-            --outFileNamePrefix {params.out_prefix} \
-            --outSAMstrandField intronMotif \
-            --outSAMtype BAM SortedByCoordinate \
-            --outFilterIntronMotifs RemoveNoncanonicalUnannotated \
-            --quantMode GeneCounts \
-            --twopassMode Basic \
-            --outReadsUnmapped Fastx"
+        STAR --runThreadN 8 --genomeDir {params.genome} --readFilesIn {input.fwd} {input.rev} --readFilesCommand zcat --sjdbGTFfile {params.gtf} --outFileNamePrefix {params.out_prefix} --outSAMstrandField intronMotif --outSAMtype BAM SortedByCoordinate --outFilterIntronMotifs RemoveNoncanonicalUnannotated --quantMode GeneCounts --twopassMode Basic --outReadsUnmapped Fastx
         """

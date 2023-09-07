@@ -1,0 +1,8 @@
+# Ignore everything in the directory
+*
+
+# Except for the .gitignore file
+!.gitignore
+
+# Include the data/fastq folder but ignore its contents
+data/fastq/*
