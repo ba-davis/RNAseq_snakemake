@@ -8,3 +8,6 @@ star_genome:
 
 gtf:
   /home/groups/hoolock2/u0/genomes/ensembl/mus_musculus/annotation/Mus_musculus.GRCm38.99.gtf
+
+strand:
+  2
