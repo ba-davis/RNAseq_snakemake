@@ -8,14 +8,15 @@ configfile:"proj_config.yaml"
 SAMPLES, = glob_wildcards("data/fastq/{sample}_R1.fastq.gz")
 #COMPARISONS = config["contrasts"]
 
-localrules:
+localrules: compile_readcounts
 
 rule all:
     input:
         expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
         expand("data/trimming/{sample}.paired_{dir}.fq.gz", sample = SAMPLES, dir = ["R1", "R2"]),
         expand("data/star/{sample}.bam", sample = SAMPLES),
-        expand("data/star/{sample}.ReadsPerGene.out.tab", sample = SAMPLES)
+        expand("data/star/{sample}.ReadsPerGene.out.tab", sample = SAMPLES),
+        "data/counts/raw_counts.txt"
 
 rule fastqc_raw:
     input:
@@ -66,4 +67,20 @@ rule star:
     shell:
         """
         STAR --runThreadN 8 --genomeDir {params.genome} --readFilesIn {input.fwd} {input.rev} --readFilesCommand zcat --sjdbGTFfile {params.gtf} --outFileNamePrefix {params.out_prefix} --outSAMstrandField intronMotif --outSAMtype BAM SortedByCoordinate --outFilterIntronMotifs RemoveNoncanonicalUnannotated --quantMode GeneCounts --twopassMode Basic --outReadsUnmapped Fastx
+        """
+
+rule compile_readcounts:
+    input:
+        expand("data/star/{sample}.ReadsPerGene.out.tab", sample = SAMPLES)
+    output:
+        counts_table = "data/counts/raw_counts.txt"
+    conda:
+        "envs/bioinfo_r.yaml"
+    params:
+        indir = "data/star",
+        strand = config["strand"],
+        suffix = ".ReadsPerGene.out.tab"
+    shell:
+        """
+        Rscript scripts/compile_readcounts.R {params.indir} {params.strand} {params.suffix} {output.counts_table}
         """
