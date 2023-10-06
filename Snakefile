@@ -82,5 +82,5 @@ rule compile_readcounts:
         suffix = ".ReadsPerGene.out.tab"
     shell:
         """
-        Rscript scripts/compile_readcounts.R {params.indir} {params.strand} (params.suffix) {output.counts_table}
+        Rscript scripts/compile_readcounts.R {params.indir} {params.strand} {params.suffix} {output.counts_table}
         """

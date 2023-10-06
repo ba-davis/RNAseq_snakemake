@@ -55,10 +55,10 @@ compile_readcounts <- function(dir,
   }
 
   # merge all data frames on "GeneID"
-  my_table <- purrr::Reduce(function(df1, df2) merge(df1,
-                                                     df2,
-                                                     by = "GeneID",
-                                                     all = TRUE), counts_dfs)
+  my_table <- Reduce(function(df1, df2) merge(df1,
+                                              df2,
+                                              by = "GeneID",
+                                              all = TRUE), counts_dfs)
 
   # export the final table
   write.table(my_table,

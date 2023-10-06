@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 
-source("downstream_functions.R")
+source("scripts/downstream_functions.R")
 
 # Command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 indir <- args[1]
-strand <- args[2]
+strand <- as.numeric(args[2])
 suffix <- args[3]
 outfile <- args[4]
 
