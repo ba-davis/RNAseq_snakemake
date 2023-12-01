@@ -8,7 +8,7 @@ configfile:"proj_config.yaml"
 SAMPLES, = glob_wildcards("data/fastq/{sample}_R1.fastq.gz")
 #COMPARISONS = config["contrasts"]
 
-localrules: compile_readcounts, collect_fqc_metrics, collect_trimmomatic_metrics, collect_star_metrics
+localrules: compile_readcounts, collect_fqc_metrics, collect_trimmomatic_metrics, collect_star_metrics, join_metrics
 
 rule all:
     input:
@@ -19,7 +19,8 @@ rule all:
         "data/counts/raw_counts.txt",
         "data/fastqc/raw/fqc_stats_table.txt",
         "data/trimming/trimmomatic_stats_table.txt",
-        "data/star/star_stats_table.txt"
+        "data/star/star_stats_table.txt",
+        "data/preprocessing_metrics/metrics.txt"
 
 rule fastqc_raw:
     input:
@@ -121,3 +122,15 @@ rule collect_star_metrics:
         outfile = "data/star/star_stats_table.txt"
     shell:
         "scripts/collect_star_stats.sh {params.inpath} {params.outfile}"
+
+rule join_metrics:
+    input:
+        fqc = "data/fastqc/raw/fqc_stats_table.txt",
+	    trim = "data/trimming/trimmomatic_stats_table.txt",
+	    aln = "data/star/star_stats_table.txt"
+    output:
+        "data/preprocessing_metrics/metrics.txt"
+    params:
+        outfile = "data/preprocessing_metrics/metrics.txt"
+    shell:
+        "scripts/join_metrics.sh {input.fqc} {input.trim} {input.aln} {params.outfile}"
