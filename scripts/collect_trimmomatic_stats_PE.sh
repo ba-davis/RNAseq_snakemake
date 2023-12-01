@@ -47,7 +47,10 @@ for i in $dir/trimmomatic_*.err; do
     grep "Input Read Pairs" $filename | cut -d " " -f21 | tr -d '()' >> tmp_drop_percent;
 done
 
-paste -d "\t" tmp_sample_name tmp_input_read_pairs tmp_both_surviving tmp_both_surviving_percent tmp_forward_surviving tmp_forward_surviving_percent tmp_reverse_surviving tmp_reverse_surviving_percent tmp_drop tmp_drop_percent > $outfile
+paste -d "\t" tmp_sample_name tmp_input_read_pairs tmp_both_surviving tmp_both_surviving_percent tmp_forward_surviving tmp_forward_surviving_percent tmp_reverse_surviving tmp_reverse_surviving_percent tmp_drop tmp_drop_percent > tmp_out.txt
+
+# sort on the first column (sample name)
+sort -k1,1 tmp_out.txt > $outfile
 
 sed -i '1 i\SampleName\tInputReadPairs\tBothSurviving\tBothSurvivingPerc\tForwardSurviving\tForwardSurvivingPerc\tReverseSurviving\tReverseSurvivingPerc\tReadPairsDropped\tReadPairsDroppedPerc' $outfile
 

@@ -49,7 +49,10 @@ for i in $dir/*.Log.final.out; do
   grep "% of reads unmapped: other" $filename | cut -f2 >> tmp_unmapped_other_percent;
 done
 
-paste -d "\t" tmp_sample_name tmp_input_reads tmp_unq_number tmp_unq_percent tmp_multi_number tmp_multi_percent tmp_too_many_loci_number tmp_too_many_loci_percent tmp_too_many_mismatch_percent tmp_too_short_percent tmp_unmapped_other_percent > $outfile
+paste -d "\t" tmp_sample_name tmp_input_reads tmp_unq_number tmp_unq_percent tmp_multi_number tmp_multi_percent tmp_too_many_loci_number tmp_too_many_loci_percent tmp_too_many_mismatch_percent tmp_too_short_percent tmp_unmapped_other_percent > tmp_out.txt
+
+# sort on the first column (sample name)
+sort -k1,1 tmp_out.txt > $outfile
 
 sed -i '1 i\SampleName\tInputReads\tUnqMap\tUnqMapPerc\tMultiMap\tMultiMapPerc\tTooManyLoci\tTooManyLociPerc\tUnmappedTooManyMismatch\tUnmappedTooShort\tUnmappedOther' $outfile
 

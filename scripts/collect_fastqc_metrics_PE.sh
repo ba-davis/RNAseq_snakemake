@@ -44,8 +44,12 @@ cut -d ' ' -f4 tmp_duplicatedR1.txt > tmp2_duplicatedR1.txt
 cut -d ' ' -f4 tmp_duplicatedR2.txt > tmp2_duplicatedR2.txt
 # Combine FQC stats into one table
 paste -d "\t" tmp_readsR1.txt tmp2_readsR2.txt tmp2_readLengthR1.txt tmp2_readLengthR2.txt tmp2_GCR1.txt tmp2_GCR2.txt tmp2_duplicatedR1.txt tmp2_duplicatedR2.txt > tmp_fqc_stats.tmp.txt
-sort tmp_fqc_stats.tmp.txt > fqc_stats.table.txt
+sort tmp_fqc_stats.tmp.txt > tmp_out.txt
+
+# sort on the first column (sample name)
+sort -k1,1 tmp_out.txt > $outfile
 
 # add a header
 sed -i '1s/^/Sample_Name\tR1_raw_reads\tR2_raw_reads\tR1_read_length\tR2_read_length\tR1_GC%\tR2_GC%\tR1_dup%\tR2_dup%\n/' fqc_stats.table.txt
+
 rm tmp*.txt
