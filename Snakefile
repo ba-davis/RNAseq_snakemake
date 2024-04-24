@@ -61,7 +61,8 @@ rule star:
         rev = "data/trimming/{sample}.paired_R2.fq.gz"
     output:
         bam_file = "data/star/{sample}.Aligned.sortedByCoord.out.bam",
-        counts = "data/star/{sample}.ReadsPerGene.out.tab"
+        counts = "data/star/{sample}.ReadsPerGene.out.tab",
+	logs = "data/star/{sample}.Log.final.out
     conda:
         "envs/star.yaml"
     params:
@@ -93,7 +94,7 @@ rule collect_fqc_metrics:
     input:
         expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"])
     output:
-        "data/fastqc/raw/fqc_stats.table.txt"
+        "data/fastqc/raw/fqc_stats_table.txt"
     params:
         inpath = "data/fastqc/raw"
     shell:
