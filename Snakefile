@@ -62,7 +62,7 @@ rule star:
     output:
         bam_file = "data/star/{sample}.Aligned.sortedByCoord.out.bam",
         counts = "data/star/{sample}.ReadsPerGene.out.tab",
-	logs = "data/star/{sample}.Log.final.out
+	logs = "data/star/{sample}.Log.final.out"
     conda:
         "envs/star.yaml"
     params:
