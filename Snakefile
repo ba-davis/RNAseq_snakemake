@@ -8,19 +8,20 @@ configfile:"proj_config.yaml"
 SAMPLES, = glob_wildcards("data/fastq/{sample}_R1.fastq.gz")
 #COMPARISONS = config["contrasts"]
 
-localrules: compile_readcounts, collect_fqc_metrics, collect_trimmomatic_metrics, collect_star_metrics, join_metrics
+localrules: compile_readcounts, collect_fqc_metrics, collect_trimmomatic_metrics, collect_star_metrics, join_metrics, ide
 
 rule all:
     input:
         expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
         expand("data/trimming/{sample}.paired_{dir}.fq.gz", sample = SAMPLES, dir = ["R1", "R2"]),
-        expand("data/star/{sample}.Aligned.sortedByCoord.out.bam", sample = SAMPLES),
-        expand("data/star/{sample}.ReadsPerGene.out.tab", sample = SAMPLES),
+        #expand("data/star/{sample}.Aligned.sortedByCoord.out.bam", sample = SAMPLES),
+        #expand("data/star/{sample}.ReadsPerGene.out.tab", sample = SAMPLES),
         "data/counts/raw_counts.txt",
         "data/fastqc/raw/fqc_stats_table.txt",
         "data/trimming/trimmomatic_stats_table.txt",
-        "data/star/star_stats_table.txt",
-        "data/preprocessing_metrics/metrics.txt"
+        #"data/star/star_stats_table.txt",
+        #"data/preprocessing_metrics/metrics.txt",
+        "data/ide/ide_complete.txt"
 
 rule fastqc_raw:
     input:
@@ -55,24 +56,24 @@ rule trimmomatic:
     shell:
         "trimmomatic PE -phred33 {input.fwd} {input.rev} {output.fwd} {output.fwd_unpaired} {output.rev} {output.rev_unpaired} {params.adapters} {params.trimmer}"
 
-rule star:
-    input:
-        fwd = "data/trimming/{sample}.paired_R1.fq.gz",
-        rev = "data/trimming/{sample}.paired_R2.fq.gz"
-    output:
-        bam_file = "data/star/{sample}.Aligned.sortedByCoord.out.bam",
-        counts = "data/star/{sample}.ReadsPerGene.out.tab",
-	logs = "data/star/{sample}.Log.final.out"
-    conda:
-        "envs/star.yaml"
-    params:
-        genome = config["star_genome"],
-        gtf = config["gtf"],
-        out_prefix = "data/star/{sample}."
-    shell:
-        """
-        STAR --runThreadN 8 --genomeDir {params.genome} --readFilesIn {input.fwd} {input.rev} --readFilesCommand zcat --sjdbGTFfile {params.gtf} --outFileNamePrefix {params.out_prefix} --outSAMstrandField intronMotif --outSAMtype BAM SortedByCoordinate --outFilterIntronMotifs RemoveNoncanonicalUnannotated --quantMode GeneCounts --twopassMode Basic --outReadsUnmapped Fastx
-        """
+#rule star:
+#    input:
+#        fwd = "data/trimming/{sample}.paired_R1.fq.gz",
+#        rev = "data/trimming/{sample}.paired_R2.fq.gz"
+#    output:
+#        bam_file = "data/star/{sample}.Aligned.sortedByCoord.out.bam",
+#        counts = "data/star/{sample}.ReadsPerGene.out.tab",
+#	logs = "data/star/{sample}.Log.final.out"
+#    conda:
+#        "envs/star.yaml"
+#    params:
+#        genome = config["star_genome"],
+#        gtf = config["gtf"],
+#        out_prefix = "data/star/{sample}."
+#    shell:
+#        """
+#        STAR --runThreadN 8 --genomeDir {params.genome} --readFilesIn {input.fwd} {input.rev} --readFilesCommand zcat --sjdbGTFfile {params.gtf} --outFileNamePrefix {params.out_prefix} --outSAMstrandField intronMotif --outSAMtype BAM SortedByCoordinate --outFilterIntronMotifs RemoveNoncanonicalUnannotated --quantMode GeneCounts --twopassMode Basic --outReadsUnmapped Fastx
+#        """
 
 rule compile_readcounts:
     input:
@@ -135,3 +136,24 @@ rule join_metrics:
         outfile = "data/preprocessing_metrics/metrics.txt"
     shell:
         "scripts/join_metrics.sh {input.fqc} {input.trim} {input.aln} {params.outfile}"
+
+rule ide:
+    input:
+        counts = "data/counts/raw_counts.txt"
+    output:
+        "data/ide/ide_complete.txt"
+    conda:
+        "envs/RNAseq_v2020.yaml"
+    params:
+        metadata = config["metadata_file"],
+        outdir = "data/ide",
+        gene_info = config["gene_info_file"],
+        gene_id_col = config["gene_id_col"],
+        gene_name_col = config["gene_name_col"],
+        description = config["description"],
+        gene_desc_col = config["gene_desc_col"],
+        var_of_int = config["var_of_int"],
+        pca_color_var = config["pca_color_var"],
+        pca_label_var = config["pca_label_var"]
+    shell:
+        "Rscript scripts/run_ide.R {input.counts} {params.metadata} {params.gene_info} {params.gene_id_col} {params.gene_name_col} {params.description} {params.gene_desc_col} {params.outdir} {params.var_of_int} {params.pca_color_var} {params.pca_label_var}"

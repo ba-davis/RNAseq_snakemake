@@ -1,13 +1,65 @@
 # Config File
 
+# not used? remove?
 adapters:
   ILLUMINACLIP:NexteraPE-PE.fa:2:30:10:8:true
 
+#---------------------#
+# Alignment Variables #
+#---------------------#
 star_genome:
-  /home/groups/hoolock2/u0/genomes/ensembl/mus_musculus/indexes/STAR_2.7.10b
+  /home/groups/hoolock2/u0/genomes/ucsc/xenLae_10.1/ncbi/STAR_2.7.10b
 
 gtf:
-  /home/groups/hoolock2/u0/genomes/ensembl/mus_musculus/annotation/Mus_musculus.GRCm38.99.gtf
+  /home/groups/hoolock2/u0/genomes/ucsc/xenLae_10.1/ncbi/ncbi_dataset/data/GCF_017654675.1/genomic.gtf
 
+# column to use for counts from STAR ReadsPerGene files
 strand:
   2
+
+#---------------#
+# IDE Variables #
+#---------------#
+# metadata file, first column should be Sample
+metadata_file:
+  "metadata.txt"
+
+# Optional: Gene info file
+# path to file with columns for GeneID, gene name, and optionally gene description
+# if you don't have a gene info file, set as "FALSE"
+gene_info_file:
+  "FALSE"
+# name of column in gene info file containing gene id's
+gene_id_col:
+  "Gene.stable.ID"
+# name of column in gene info file containing gene names
+gene_name_col:
+  "Gene.name"
+# whether the gene info file has a gene description column
+# if yes, set as "TRUE"
+# if no, set as "FALSE"
+description:
+  "FALSE"
+# name of column in gene info file containing gene description
+# if not present, just leave as "gene_desc" (it won't be used)
+gene_desc_col:
+  "gene_desc"
+
+# Variable of interest for IDE
+# must be column in metadata file
+# used for:
+#   - defining groups for low-count filtering
+#   - defining groups for variance stabilizing transformation
+#   - coloring data points on the PCA plots
+# When defining groups for low count filtering, it is better to use all combos
+#   of important variables, ensuring that genes that might be important to
+#   only a subset of samples are not removed.
+var_of_int:
+  "Treatment_Sex_Ephys"
+
+# PCA Plot Vars
+pca_color_var:
+  "Treatment_Sex_Ephys"
+
+pca_label_var:
+  "Sample"
