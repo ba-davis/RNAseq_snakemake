@@ -4,15 +4,15 @@
         "account": "davibr",
         "mem": "30G",
         "time": "0-24:00",
-	"partition": "exacloud",
+	"partition": "batch",
 	"cores": "8",
 	"nodes": "1",
         "qos": "normal"
     },
     "fastqc_raw":
     {
-	    "stdout": "logs/fastqcRaw_%A.out",
-	    "stderr": "logs/fastqcRaw_%A.err"
+	"stdout": "logs/fastqcRaw_%A.out",
+	"stderr": "logs/fastqcRaw_%A.err"
     },
     "trimmomatic":
     {

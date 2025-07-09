@@ -97,6 +97,7 @@ raw_counts[, 1] <- NULL
 print("reading in metadata.")
 # read in metadata
 coldata <- read.delim(metadata_file, header=T)
+coldata[[1]] <- as.character(coldata[[1]])
 
 print("reading in gene info file.")
 # if provided, read in gene info and clean colnames
@@ -113,6 +114,28 @@ if (gene_info_file) {
 
 # check that column names of raw_counts are in same order as 
 # sample rows in metadata file
+# check that the column names of the counts table (samples) is same order as metadata samples
+# Check if the sample names in counts are all present in coldata
+if (all(colnames(raw_counts) %in% coldata$sample_name) && all(coldata$sample_name %in% colnames(raw_counts))) {
+  print("All sample names are present in both metadata and counts table.")
+  # check if the sample names are in the same order
+  if (identical(colnames(raw_counts), coldata$sample_name)) {
+    print("Samples are in the same order in both the metadata and counts table.")
+  } else {
+    print("Samples are NOT in the same order between the metadata and counts table.")
+    print("Re-ordering columns of counts table to match sample row order of metadata.")
+    # Reorder columns of counts to match the sample_name column
+    raw_counts2 <- raw_counts[, coldata$sample_name]
+    # export new counts table
+    raw_counts3 <- tibble::rownames_to_column(raw_counts2, var = "GeneID")
+    write.table(raw_counts3, "raw_counts_reordered.txt", sep="\t", col.names=T, row.names=F, quote=F)
+    raw_counts <- raw_counts2
+  }
+} else {
+  print(paste0("Samples in counts but not in metadata: ", paste(setdiff(colnames(raw_counts), coldata$sample_name), collapse = ", ")))
+  print(paste0("Samples in metadata but not in counts: ", paste(setdiff(coldata$sample_name, colnames(raw_counts)), collapse = ", ")))
+  stop("Some samples are missing between counts table and metadata.")
+}
 
 #------------------------------------------------------#
 # Set working directory as outdir
